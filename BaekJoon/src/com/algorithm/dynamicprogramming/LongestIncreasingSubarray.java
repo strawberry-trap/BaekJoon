@@ -24,20 +24,18 @@ public class LongestIncreasingSubarray {
 		
 		// input range 1 ~ 1000
 		long[] dp = new long[n+1];
-		dp[1] = 1;
-		long max = numbers[1]; // first number
-		
-		for (int i=2; i<=n; i++) {
-			if (numbers[i] > max) {
-				max = numbers[i]; // update max
-				dp[i] = dp[i-1] + 1;
+		long max = 1;
+		for (int i=1; i<=n; i++) {
+			dp[i] = 1;
+			for (int j=1; j<i; j++) {
+				if (numbers[j] < numbers[i] && dp[i] < dp[j]+1) {
+					dp[i] = dp[j] + 1;
+				}
 			}
-			else { // if (numbers[i] <= max)
-				dp[i] = dp[i-1];
-			}
+			max = Math.max(max, dp[i]);
 		}
 		
-		System.out.println(dp[n]);
+		System.out.println(max);
 
 		return;
 	}
