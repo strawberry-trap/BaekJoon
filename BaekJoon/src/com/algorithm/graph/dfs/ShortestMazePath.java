@@ -1,4 +1,4 @@
-package com.algorithm.dfs;
+package com.algorithm.graph.dfs;
 
 import java.io.BufferedReader;
 import java.io.IOException;

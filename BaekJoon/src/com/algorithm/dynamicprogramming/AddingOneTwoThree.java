@@ -14,6 +14,7 @@ public class AddingOneTwoThree {
 		long[][] dp = new long[100001][4]; // using 1, 2, 3
 		dp[1][1] = dp[2][2] = dp[3][3] = 1;
 		
+		// dp[N][K] means sum up to N, using K as the last number
 		for (int i=1; i< dp.length; i++) {
 			if (i>1) dp[i][1] = (dp[i-1][2] +dp[i-1][3]) % mod;
 			if (i>2) dp[i][2] = (dp[i-2][1] +dp[i-2][3]) % mod;

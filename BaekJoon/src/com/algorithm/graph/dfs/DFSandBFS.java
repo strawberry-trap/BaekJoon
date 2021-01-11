@@ -1,4 +1,4 @@
-package com.algorithm.dfs;
+package com.algorithm.graph.dfs;
 
 import java.io.IOException;
 import java.util.LinkedList;

@@ -1,0 +1,7 @@
+	public void main() throws IOException {
+		
+		Scanner sc = new Scanner(System.in);
+		int n = sc.nextInt();
+
+		return;
+	}

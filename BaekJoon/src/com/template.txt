@@ -1,0 +1,18 @@
+	public void main() throws IOException {
+		
+		// read input
+		BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
+		String s = bf.readLine();
+		int n = Integer.parseInt(s);
+		
+		// convert string array to an integer array
+		String[] numbersAsString = bf.readLine().split(" ");
+		int[] numbers = new int[numbersAsString.length];
+		for (int j=0; j<numbersAsString.length; j++) {
+			numbers[j] = Integer.parseInt(numbersAsString[j]); 
+		}
+		
+		
+		bf.close();	
+		return;
+	}
