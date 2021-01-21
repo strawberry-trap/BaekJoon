@@ -21,88 +21,125 @@ public class BridgingTwoContinent {
 			String[] numbersAsString = bf.readLine().split(" ");
 			int[] numbers = new int[numbersAsString.length];
 			for (int j=0; j<numbersAsString.length; j++) {
-				world[i][j] = Integer.parseInt(numbersAsString[j]); 
+				world[i][j] = Integer.parseInt(numbersAsString[j]);
 			}
 		}
 
-		/*
-		 * 1. put all the "land" coordinates in the Queue.
-		 * 2. run bfs using the Queue
-		 * 3. while running bfs, if any of the spreading meets another spreading, that is the shortest path
-		 * */
-		Queue<int[]> Q = new LinkedList<int[]>();
+		// mark each land with different numbers
+		int uniqueNumber = -1;
 		for (int i=0; i<n; i++) {
 			for (int j=0; j<n; j++) {
+				
+				// while traversing through the world[][], when meeting a land, spread within that land using bfs, and mark them with a unique number
 				if (world[i][j] == 1) {
-					Q.offer(new int[] {i,j});
-					world[i][j] = -1; // mark as visited
+					
+					// BFS
+					Queue<int[]> Q = new LinkedList<int[]>();
+					Q.offer(new int[] {i, j});
+					world[i][j] = uniqueNumber;
+					
+					while(!Q.isEmpty()) {
+						int Qsize = Q.size();
+						for (int k=0; k<Qsize; k++) {
+							
+							int[] xy = Q.poll();
+							int x = xy[0];
+							int y = xy[1];
+							
+							if (x+1<n && world[x+1][y] == 1) {
+								world[x+1][y] = uniqueNumber;
+								Q.offer(new int[] {x+1, y});
+							}
+							
+							if (x-1>=0 && world[x-1][y] == 1) {
+								world[x-1][y] = uniqueNumber;
+								Q.offer(new int[] {x-1, y});
+							}
+							
+							if (y+1<n && world[x][y+1] == 1) {
+								world[x][y+1] = uniqueNumber;
+								Q.offer(new int[] {x, y+1});
+							}
+							
+							if (y-1>=0 && world[x][y-1] == 1) {
+								world[x][y-1] = uniqueNumber;
+								Q.offer(new int[] {x, y-1});
+							}
+						}
+					}
+					uniqueNumber--; // update for next land
 				}
 			}
 		}
 		
-		int length = 0;
-		int currentVisitingMarking = 0;
+		// now, each land are marked with unique numbers like -1, -2, ...
+		// hence we could run another BFS on the entire land, and check if a land has spread over another land.
+		Queue<int[]> Q = new LinkedList<int[]>();
+		for (int i=0; i<n; i++) {
+			for (int j=0; j<n; j++) {
+				
+				if (world[i][j] < 0) {
+					Q.offer(new int[] {i, j, world[i][j]});
+				}
+			}
+		}
 		
+		int bridge = 0; // answer
 		while(!Q.isEmpty()) {
 			
-			length++;
-			currentVisitingMarking--;
+			int Qsize = Q.size();
+			bridge++; 
 			
-			int QSize = Q.size();
-			for (int i=0; i<QSize; i++) {
+			for (int i=0; i<Qsize; i++) {
 				
-				// pop a node
-				int[] spot = Q.poll();
-				int x = spot[0];
-				int y = spot[1];
+				int[] cord = Q.poll();
+				int x = cord[0];
+				int y = cord[1];
+				int landNumber = cord[2];
+				world[x][y] *= -1; // mark as visited
 				
 				if (x+1<n) {
 					
-					// current spot is a water, and we haven't visited here before
-					if (world[x+1][y] == 0) {
-						world[x+1][y] = currentVisitingMarking; // mark as visited
-						Q.offer(new int[] {x+1, y}); // push to Queue
-					}
-					// while current level order traversal, we will mark "visited" as "currentVisitingMarking".
-					// "currentVisitingMarking" is keep decreasing(-1, -2, -3, ..), so we can distinguish if we are at currently exploring land,
-					// or a land that is visited before.
-					else if (world[x+1][y]<0 && world[x+1][y] != currentVisitingMarking) {
-						System.out.println(length);
+					// if we meet another spreading land
+					if (world[x+1][y] > 0 && world[x+1][y] != landNumber*(-1)) {
+						
+						// spreading length will be the same between all lands, so just multiply by two and remove the meeting spot which is redundant
+						System.out.println(bridge*2 - 1);
 						return;
 					}
+					
+					// else
+					Q.offer(new int[] {x+1, y, landNumber});
+					world[x+1][y] = landNumber*(-1); // mark as visited
 				}
 				
 				if (x-1>=0) {
-					if (world[x-1][y] == 0) {
-						world[x-1][y] = currentVisitingMarking;
-						Q.offer(new int[] {x-1, y});
-					}
-					else if (world[x-1][y]<0 && world[x-1][y] != currentVisitingMarking) {
-						System.out.println(length);
+					if (world[x-1][y] > 0 && world[x-1][y] != landNumber*(-1)) {
+						System.out.println(bridge*2 - 1);
 						return;
 					}
+					Q.offer(new int[] {x-1, y, landNumber});
+					world[x-1][y] = landNumber*(-1);
 				}
 				
 				if (y+1<n) {
-					if (world[x][y+1] == 0) {
-						world[x][y+1] = currentVisitingMarking;
-						Q.offer(new int[] {x, y+1});
-					}
-					else if (world[x][y+1]<0 && world[x][y+1] != currentVisitingMarking) {
-						System.out.println(length);
+					
+					if (world[x][y+1] > 0 && world[x][y+1] != landNumber*(-1)) {
+						System.out.println(bridge*2 - 1);
 						return;
 					}
+					Q.offer(new int[] {x, y+1, landNumber});
+					world[x][y+1] = landNumber*(-1);
 				}
 				
 				if (y-1>=0) {
-					if (world[x][y-1] == 0) {
-						world[x][y-1] = currentVisitingMarking;
-						Q.offer(new int[] {x, y-1});
-					}
-					else if (world[x][y-1]<0 && world[x][y-1] != currentVisitingMarking) {
-						System.out.println(length);
+					
+					if (world[x][y-1] > 0 && world[x][y-1] != landNumber*(-1)) {
+						System.out.println(bridge*2 - 1);
 						return;
 					}
+						Q.offer(new int[] {x, y-1, landNumber});
+						world[x][y-1] = landNumber*(-1);
 				}
 			}
 		}
@@ -110,5 +147,4 @@ public class BridgingTwoContinent {
 		bf.close();	
 		return;
 	}
-
 }
