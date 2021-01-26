@@ -11,9 +11,13 @@ public class CopyAndPasteEmoji {
 		Scanner sc = new Scanner(System.in);
 		int n = sc.nextInt();
 
-		boolean[][] visited = new boolean[n+1][n+1];
+		boolean[][] visited = new boolean[n*2 + 1][n*2 + 1];
 		for (int i=0; i<visited.length; i++) {
 			for (int j=0; j<visited[0].length; j++) {
+				if (i == 0) { // not using index 0
+					visited[i][j] = true;
+					continue;
+				}
 				visited[i][j] = false;
 			}
 		}
@@ -21,20 +25,19 @@ public class CopyAndPasteEmoji {
 		// initialize Queue, and push starting node
 		// int[number of emoji shown on the screen][number of emoji saved in clipboard]
 		Queue<int[]> Q = new LinkedList<int[]>();
-		Q.offer(new int[] {1, 0, 0});
+		Q.offer(new int[] {1, 0}); // {screen, clipboard, time}
 		visited[1][0] = true;
-		visited[0][0] = true; // not using index 0
 		
 		// run bfs
+		int time = 0;
 		while(!Q.isEmpty()) {
-						
+			
 			int Qsize = Q.size();
 			for (int i=0; i<Qsize; i++) {
 				
 				int[] e = Q.poll();
 				int screen = e[0];
 				int clipboard = e[1];
-				int time = e[2];
 				
 				// end condition
 				if (screen == n) {
@@ -43,23 +46,24 @@ public class CopyAndPasteEmoji {
 				}
 				
 				// delete single emoji from the screen
-				if (screen-1 >=0 && visited[screen-1][clipboard] == false) {
-					Q.offer(new int[] {screen-1, clipboard, time+1});
+				if (screen-1 >= 0 && visited[screen-1][clipboard] == false) {
+					Q.offer(new int[] {screen-1, clipboard});
 					visited[screen-1][clipboard] = true;
 				}
 				
-				// add emoji shown on the screen to the clipboard
-				if (clipboard+screen <= n && visited[screen][clipboard+screen] == false) {
-					Q.offer(new int[] {screen, clipboard+screen, time+1});
-					visited[screen][clipboard+screen] = true;
+				// save emoji shown on the screen to the clipboard
+				if (screen <= n*2 && visited[screen][screen] == false) {
+					Q.offer(new int[] {screen, screen});
+					visited[screen][screen] = true;
 				}
 				
 				// paste entire emoji from the clipboard into the screen
-				if (screen+clipboard <= n && visited[screen + clipboard][clipboard] == false) {
-					Q.offer(new int[] {screen+clipboard, clipboard, time+1});
-					visited[screen+clipboard][clipboard] = true;
+				if (screen + clipboard <= n*2 && visited[screen + clipboard][clipboard] == false) {
+					Q.offer(new int[] {screen + clipboard, clipboard});
+					visited[screen + clipboard][clipboard] = true;
 				}
 			}
+			time++;
 		}
 		
 		
