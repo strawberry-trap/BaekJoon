@@ -3,8 +3,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class GomokuGame {
 
@@ -23,6 +21,7 @@ public class GomokuGame {
 
 			String row = bf.readLine();
 			for (int j=0; j<row.length(); j++) {
+				
 				board[i][j] = row.charAt(j);
 
 				// if there is a stone, save that coordinate
@@ -32,26 +31,27 @@ public class GomokuGame {
 			}
 		}
 
-		// 8 directions that pairs like dx[i], dx[i]
-		int[] dx = {-1, 0, 1, 1, 1, 0, -1, -1};
-		int[] dy = {-1, -1, -1, 0, 1, 1, 1, 0};
+		// 8 directions that pair like dx[i], dx[i]
+		int[] dx = {-1,-1, 0, 1, 1, 1,  0, -1};
+		int[] dy = {0,  1, 1, 1, 0,-1, -1, -1};
 		
 		// pick a stone
-		for (int j=0; j<stone.size(); j++) {
+		for (int i=0; i<stone.size(); i++) {
 
-			int[] starting = stone.get(j);
-			int x = starting[0];
-			int y = starting[1];
-			
-			// for each directions,
-			for (int i=0; i<DIRECTIONS; i++) {
+			int[] starting = stone.get(i);
+
+			// for each direction,
+			for (int j=0; j<DIRECTIONS; j++) {
+				
+				int x = starting[0];
+				int y = starting[1];
 				
 				// check if we could put 5 stones in a row. (loop runs 4 times)
 				int cnt = 1;
 				for (int k=0; k<WINNING_STONES-1; k++) {
 					
-					x += dx[i];
-					y += dy[i];
+					x += dx[j];
+					y += dy[j];
 					if (x>=0 && x<BOARD_LENGTH && y>=0 && y<BOARD_LENGTH) {
 						
 						if (board[x][y] == 'X') {
